@@ -1,0 +1,30 @@
+
+logs
+.DS_Store
+
+# Build Targets
+.prebuild
+.npminstall
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Folders
+_obj
+_test
+
+.tmp
+
+# Vim temporary files
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+.agignore
+.ctags
+tags
