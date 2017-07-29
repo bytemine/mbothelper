@@ -31,12 +31,13 @@ var client *model.Client4
 var webSocketClient *model.WebSocketClient
 
 var botUser *model.User
-var botTeam *model.Team
-var debuggingChannel *model.Channel
-var mainChannel *model.Channel
-var statusChannel *model.Channel
+var BotTeam *model.Team
+var DebuggingChannel *model.Channel
+var MainChannel *model.Channel
+var StatusChannel *model.Channel
 
-func SetClient(client4 *model.Client4) {
+func InitMbotHelper(botConfig BotConfig, client4 *model.Client4) {
+	config = botConfig
 	client = client4
 }
 
@@ -84,16 +85,16 @@ func FindBotTeam() {
 		PrintError(resp.Error)
 		os.Exit(1)
 	} else {
-		botTeam = team
+		BotTeam = team
 	}
 }
 
 func CreateBotDebuggingChannelIfNeeded() {
-	if rchannel, resp := client.GetChannelByName(config.LogChannel, botTeam.Id, ""); resp.Error != nil {
+	if rchannel, resp := client.GetChannelByName(config.LogChannel, BotTeam.Id, ""); resp.Error != nil {
 		println("We failed to get the channels")
 		PrintError(resp.Error)
 	} else {
-		debuggingChannel = rchannel
+		DebuggingChannel = rchannel
 		return
 	}
 
@@ -103,34 +104,24 @@ func CreateBotDebuggingChannelIfNeeded() {
 	channel.DisplayName = "Debugging For Sample Bot"
 	channel.Purpose = "This is used as a test channel for logging bot debug messages"
 	channel.Type = model.CHANNEL_OPEN
-	channel.TeamId = botTeam.Id
+	channel.TeamId = BotTeam.Id
 	if rchannel, resp := client.CreateChannel(channel); resp.Error != nil {
 		println("We failed to create the channel " + config.LogChannel)
 		PrintError(resp.Error)
 	} else {
-		debuggingChannel = rchannel
+		DebuggingChannel = rchannel
 		println("Looks like this might be the first run so we've created the channel " + config.LogChannel)
 	}
 }
 
-func JoinMainChannel() {
-	if rchannel, resp := client.GetChannelByName(config.MainChannel, botTeam.Id, ""); resp.Error != nil {
+func JoinChannel(channel string, teamId string) (*model.Channel) {
+	if rchannel, resp := client.GetChannelByName(channel, teamId, ""); resp.Error != nil {
 		println("We failed to get the channels")
 		PrintError(resp.Error)
 	} else {
-		mainChannel = rchannel
-		return
+		return rchannel
 	}
-}
-
-func JoinStatusChannel() {
-	if rchannel, resp := client.GetChannelByName(config.StatusChannel, botTeam.Id, ""); resp.Error != nil {
-		println("We failed to get the channels")
-		PrintError(resp.Error)
-	} else {
-		statusChannel = rchannel
-		return
-	}
+	return nil
 }
 
 func SendMsgToChannel(msg string, replyToId string, channelId string) {
@@ -147,7 +138,7 @@ func SendMsgToChannel(msg string, replyToId string, channelId string) {
 
 func SendMsgToDebuggingChannel(msg string, replyToId string) {
 	post := &model.Post{}
-	post.ChannelId = debuggingChannel.Id
+	post.ChannelId = DebuggingChannel.Id
 	post.Message = msg
 
 	post.RootId = replyToId
@@ -164,7 +155,7 @@ func HandleWebSocketResponse(event *model.WebSocketEvent) {
 
 func HandleMsgFromDebuggingChannel(event *model.WebSocketEvent) {
 	// If this isn't the debugging channel then lets ingore it
-	if event.Broadcast.ChannelId != debuggingChannel.Id {
+	if event.Broadcast.ChannelId != DebuggingChannel.Id {
 		return
 	}
 
