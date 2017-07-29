@@ -23,6 +23,15 @@ type BotConfig struct {
 	LogChannel string
 	MainChannel string
 	StatusChannel string
+	PluginsDirectory string
+	Plugins []string
+	PluginsConfig map[string]BotConfigPlugin
+}
+
+type BotConfigPlugin struct {
+	PluginName string
+	PluginType string
+	Handler string
 }
 
 var config BotConfig
