@@ -32,6 +32,7 @@ type BotConfigPlugin struct {
 	PluginName string
 	PluginType string
 	Handler string
+	PathHandler []string
 }
 
 var config BotConfig
