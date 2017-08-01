@@ -15,6 +15,10 @@ logs
 _obj
 _test
 
+# Log files
+*mattermost.log
+*npm-debug.log*
+
 .tmp
 
 # Vim temporary files
@@ -28,3 +32,9 @@ Session.vim
 .agignore
 .ctags
 tags
+
+# ide files
+.idea
+
+# plugins dir
+plugins
