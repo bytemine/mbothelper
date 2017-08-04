@@ -30,8 +30,8 @@ type BotConfig struct {
 
 type BotConfigPlugin struct {
 	PluginName string
-	PluginType string
 	Handler string
+	Watcher string
 	PathPatterns []string
 	PluginConfig string
 }
