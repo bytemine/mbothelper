@@ -160,59 +160,6 @@ func SendMsgToDebuggingChannel(msg string, replyToId string) {
 	}
 }
 
-func HandleWebSocketResponse(event *model.WebSocketEvent) {
-	HandleMsgFromDebuggingChannel(event)
-}
-
-func HandleMsgFromDebuggingChannel(event *model.WebSocketEvent) {
-	// If this isn't the debugging channel then lets ingore it
-	if event.Broadcast.ChannelId != DebuggingChannel.Id {
-		return
-	}
-
-	// Lets only reponded to messaged posted events
-	if event.Event != model.WEBSOCKET_EVENT_POSTED {
-		return
-	}
-
-	log.Println("responding to debugging channel msg")
-
-	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
-	if post != nil {
-
-		// ignore my events
-		if post.UserId == botUser.Id {
-			return
-		}
-
-		// if you see any word matching 'alive' then respond
-		if matched, _ := regexp.MatchString(`(?:^|\W)alive(?:$|\W)`, post.Message); matched {
-			SendMsgToDebuggingChannel("Yes I'm running", post.Id)
-			return
-		}
-
-		// if you see any word matching 'up' then respond
-		if matched, _ := regexp.MatchString(`(?:^|\W)up(?:$|\W)`, post.Message); matched {
-			SendMsgToDebuggingChannel("Yes I'm running", post.Id)
-			return
-		}
-
-		// if you see any word matching 'running' then respond
-		if matched, _ := regexp.MatchString(`(?:^|\W)running(?:$|\W)`, post.Message); matched {
-			SendMsgToDebuggingChannel("Yes I'm running", post.Id)
-			return
-		}
-
-		// if you see any word matching 'hello' then respond
-		if matched, _ := regexp.MatchString(`(?:^|\W)hello(?:$|\W)`, post.Message); matched {
-			SendMsgToDebuggingChannel("Yes I'm running", post.Id)
-			return
-		}
-	}
-
-	SendMsgToDebuggingChannel("I did not understand you!", post.Id)
-}
-
 func PrintError(err *model.AppError) {
 	log.Printf("\tError Details:\n\t\t%v\n\t\t%v\n\t\t%v", err.Message, err.Id, err.DetailedError)
 }
