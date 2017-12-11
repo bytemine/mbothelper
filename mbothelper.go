@@ -1,6 +1,7 @@
 package mbothelper
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"regexp"
@@ -11,27 +12,27 @@ import (
 
 type BotConfig struct {
 	MattermostServer string
-	MattermostWSURL string
-	Listen string
-	BotName string
-	UserEmail string
-	UserName string
-	UserPassword string
-	UserLastname string
-	UserFirstname string
-	TeamName string
-	LogChannel string
-	MainChannel string
-	StatusChannel string
+	MattermostWSURL  string
+	Listen           string
+	BotName          string
+	UserEmail        string
+	UserName         string
+	UserPassword     string
+	UserLastname     string
+	UserFirstname    string
+	TeamName         string
+	LogChannel       string
+	MainChannel      string
+	StatusChannel    string
 	PluginsDirectory string
-	Plugins []string
-	PluginsConfig map[string]BotConfigPlugin
+	Plugins          []string
+	PluginsConfig    map[string]BotConfigPlugin
 }
 
 type BotConfigPlugin struct {
-	PluginName string
-	Handler string
-	Watcher string
+	PluginName   string
+	Handler      string
+	Watcher      string
 	PathPatterns []string
 	PluginConfig string
 }
@@ -54,17 +55,17 @@ func InitMbotHelper(botConfig BotConfig, client4 *model.Client4) {
 
 func MakeSureServerIsRunning() {
 	if props, resp := client.GetOldClientConfig(""); resp.Error != nil {
-		println("There was a problem pinging the Mattermost server.  Are you sure it's running?")
+		log.Println("There was a problem pinging the Mattermost server.  Are you sure it's running?")
 		PrintError(resp.Error)
 		os.Exit(1)
 	} else {
-		println("Server detected and is running version " + props["Version"])
+		log.Println("Server detected and is running version " + props["Version"])
 	}
 }
 
 func LoginAsTheBotUser() {
 	if user, resp := client.Login(config.UserEmail, config.UserPassword); resp.Error != nil {
-		println("There was a problem logging into the Mattermost server.  Are you sure ran the setup steps from the README.md?")
+		log.Println("There was a problem logging into the Mattermost server.  Are you sure ran the setup steps from the README.md?")
 		PrintError(resp.Error)
 		os.Exit(1)
 	} else {
@@ -79,20 +80,19 @@ func UpdateTheBotUserIfNeeded() {
 		botUser.Username = config.UserName
 
 		if user, resp := client.UpdateUser(botUser); resp.Error != nil {
-			println("We failed to update the Sample Bot user")
+			log.Println("We failed to update the Sample Bot user")
 			PrintError(resp.Error)
 			os.Exit(1)
 		} else {
 			botUser = user
-			println("Looks like this might be the first run so we've updated the bots account settings")
+			log.Println("Looks like this might be the first run so we've updated the bots account settings")
 		}
 	}
 }
 
 func FindBotTeam() {
 	if team, resp := client.GetTeamByName(config.TeamName, ""); resp.Error != nil {
-		println("We failed to get the initial load")
-		println("or we do not appear to be a member of the team '" + config.TeamName + "'")
+		log.Printf("We failed to get the initial load or we do not appear to be a member of the team '%v'", config.TeamName)
 		PrintError(resp.Error)
 		os.Exit(1)
 	} else {
@@ -102,7 +102,7 @@ func FindBotTeam() {
 
 func CreateBotDebuggingChannelIfNeeded() {
 	if rchannel, resp := client.GetChannelByName(config.LogChannel, BotTeam.Id, ""); resp.Error != nil {
-		println("We failed to get the channels")
+		log.Println("We failed to get the channels")
 		PrintError(resp.Error)
 	} else {
 		DebuggingChannel = rchannel
@@ -117,17 +117,17 @@ func CreateBotDebuggingChannelIfNeeded() {
 	channel.Type = model.CHANNEL_OPEN
 	channel.TeamId = BotTeam.Id
 	if rchannel, resp := client.CreateChannel(channel); resp.Error != nil {
-		println("We failed to create the channel " + config.LogChannel)
+		log.Println("We failed to create the channel " + config.LogChannel)
 		PrintError(resp.Error)
 	} else {
 		DebuggingChannel = rchannel
-		println("Looks like this might be the first run so we've created the channel " + config.LogChannel)
+		log.Println("Looks like this might be the first run so we've created the channel " + config.LogChannel)
 	}
 }
 
-func JoinChannel(channel string, teamId string) (*model.Channel) {
+func JoinChannel(channel string, teamId string) *model.Channel {
 	if rchannel, resp := client.GetChannelByName(channel, teamId, ""); resp.Error != nil {
-		println("We failed to get the channels")
+		log.Println("We failed to get the channels")
 		PrintError(resp.Error)
 	} else {
 		return rchannel
@@ -155,7 +155,7 @@ func SendMsgToDebuggingChannel(msg string, replyToId string) {
 	post.RootId = replyToId
 
 	if _, resp := client.CreatePost(post); resp.Error != nil {
-		println("We failed to send a message to the logging channel")
+		log.Println("We failed to send a message to the logging channel")
 		PrintError(resp.Error)
 	}
 }
@@ -175,7 +175,7 @@ func HandleMsgFromDebuggingChannel(event *model.WebSocketEvent) {
 		return
 	}
 
-	println("responding to debugging channel msg")
+	log.Println("responding to debugging channel msg")
 
 	post := model.PostFromJson(strings.NewReader(event.Data["post"].(string)))
 	if post != nil {
@@ -214,10 +214,7 @@ func HandleMsgFromDebuggingChannel(event *model.WebSocketEvent) {
 }
 
 func PrintError(err *model.AppError) {
-	println("\tError Details:")
-	println("\t\t" + err.Message)
-	println("\t\t" + err.Id)
-	println("\t\t" + err.DetailedError)
+	log.Printf("\tError Details:\n\t\t%v\n\t\t%v\n\t\t%v", err.Message, err.Id, err.DetailedError)
 }
 
 func SetupGracefulShutdown() {
