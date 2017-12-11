@@ -112,8 +112,8 @@ func CreateBotDebuggingChannelIfNeeded() {
 	// Looks like we need to create the logging channel
 	channel := &model.Channel{}
 	channel.Name = config.LogChannel
-	channel.DisplayName = "Debugging For Sample Bot"
-	channel.Purpose = "This is used as a test channel for logging bot debug messages"
+	channel.DisplayName = "Debugging Channel for bot"
+	channel.Purpose = "This is used for logging bot debug messages"
 	channel.Type = model.CHANNEL_OPEN
 	channel.TeamId = BotTeam.Id
 	if rchannel, resp := client.CreateChannel(channel); resp.Error != nil {
