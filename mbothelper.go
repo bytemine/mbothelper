@@ -4,8 +4,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"regexp"
-	"strings"
 
 	"github.com/mattermost/platform/model"
 )
