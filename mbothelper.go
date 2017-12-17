@@ -40,7 +40,7 @@ var config BotConfig
 var client *model.Client4
 var webSocketClient *model.WebSocketClient
 
-var botUser *model.User
+var BotUser *model.User
 var BotTeam *model.Team
 var DebuggingChannel *model.Channel
 var MainChannel *model.Channel
@@ -67,22 +67,22 @@ func LoginAsTheBotUser() {
 		PrintError(resp.Error)
 		os.Exit(1)
 	} else {
-		botUser = user
+		BotUser = user
 	}
 }
 
 func UpdateTheBotUserIfNeeded() {
-	if botUser.FirstName != config.UserFirstname || botUser.LastName != config.UserLastname || botUser.Username != config.UserName {
-		botUser.FirstName = config.UserFirstname
-		botUser.LastName = config.UserLastname
-		botUser.Username = config.UserName
+	if BotUser.FirstName != config.UserFirstname || BotUser.LastName != config.UserLastname || BotUser.Username != config.UserName {
+		BotUser.FirstName = config.UserFirstname
+		BotUser.LastName = config.UserLastname
+		BotUser.Username = config.UserName
 
-		if user, resp := client.UpdateUser(botUser); resp.Error != nil {
+		if user, resp := client.UpdateUser(BotUser); resp.Error != nil {
 			log.Println("We failed to update the Sample Bot user")
 			PrintError(resp.Error)
 			os.Exit(1)
 		} else {
-			botUser = user
+			BotUser = user
 			log.Println("Looks like this might be the first run so we've updated the bots account settings")
 		}
 	}
