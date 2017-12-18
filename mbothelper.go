@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 
+	"fmt"
 	"github.com/mattermost/platform/model"
 )
 
@@ -142,7 +143,7 @@ func SendMsgToChannel(msg string, replyToId string, channelId string) {
 	post.RootId = replyToId
 
 	if _, resp := client.CreatePost(post); resp.Error != nil {
-		SendMsgToDebuggingChannel("We failed to send a message to the main channel", "")
+		SendMsgToDebuggingChannel(fmt.Sprintf("We failed to send a message to the channel: %s", channelId), "")
 	}
 }
 
