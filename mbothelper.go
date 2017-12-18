@@ -34,7 +34,7 @@ type BotConfigPlugin struct {
 	Watcher      string
 	PathPatterns []string
 	PluginConfig string
-	Channels     []string
+	Channels     map[string]*model.Channel
 }
 
 var config BotConfig
