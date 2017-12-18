@@ -33,6 +33,7 @@ type BotConfigPlugin struct {
 	Watcher      string
 	PathPatterns []string
 	PluginConfig string
+	Channels     []string
 }
 
 var config BotConfig
