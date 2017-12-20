@@ -32,7 +32,7 @@ type BotConfigPlugin struct {
 	PluginName          string
 	Handler             string
 	Watcher             string
-	NotificationHandler string
+	MentionHandler		string
 	PathPatterns        []string
 	PluginConfig        string
 	Channels            map[string]*model.Channel
