@@ -29,13 +29,13 @@ type BotConfig struct {
 }
 
 type BotConfigPlugin struct {
-	PluginName          string
-	Handler             string
-	Watcher             string
-	MentionHandler		string
-	PathPatterns        []string
-	PluginConfig        string
-	Channels            map[string]*model.Channel
+	PluginName     string
+	Handler        string
+	Watcher        string
+	MentionHandler string
+	PathPatterns   []string
+	PluginConfig   string
+	Channels       map[string]*model.Channel
 }
 
 var config BotConfig
