@@ -148,7 +148,7 @@ func SendMsgToChannel(msg string, replyToId string, channelId string) {
 	post.RootId = replyToId
 
 	if _, resp := client.CreatePost(post); resp.Error != nil {
-		SendMsgToDebuggingChannel(fmt.Sprintf("We failed to send a message to the channel: %s", channelId), "")
+		SendMsgToDebuggingChannel(fmt.Sprintf("Failed to send a message to the channel: %s", channelId), "")
 	}
 }
 
