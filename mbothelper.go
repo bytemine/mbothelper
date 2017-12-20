@@ -127,11 +127,11 @@ func CreateBotDebuggingChannelIfNeeded() {
 
 func JoinChannel(channel string, teamId string, userId string) *model.Channel {
 	if rchannel, resp := client.GetChannelByName(channel, teamId, ""); resp.Error != nil {
-		log.Println("We failed to get the channels")
+		log.Printf("Failed to get the channel by name: %s", channel)
 		PrintError(resp.Error)
 	} else {
 		if _, resp := client.AddChannelMember(rchannel.Id, userId); resp.Error != nil {
-			log.Println("We failed to join ourselves to the channel")
+			log.Printf("Failed to join ourselves to the channel: %s", channel)
 			PrintError(resp.Error)
 		}
 		return rchannel
