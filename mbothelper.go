@@ -166,6 +166,27 @@ func SendMsgToDebuggingChannel(msg string, replyToId string) {
 	}
 }
 
+func ReplyToUser(msg string, userId string) {
+
+	// we need a direct channel to the other user
+	channel, response := client.CreateDirectChannel(userId, BotUser.Id)
+
+	if response != nil {
+		log.Printf("response was not nil: %v", response)
+	}
+
+	newPost := model.Post{
+		UserId:    userId,
+		ChannelId: channel.Id,
+		Message:   msg,
+	}
+	r, e := client.CreatePost(&newPost)
+	if e != nil {
+		log.Printf("Couldn't make post: %s", e)
+	}
+	log.Printf("Post created: %v", r)
+}
+
 func PrintError(err *model.AppError) {
 	log.Printf("\tError Details:\n\t\t%v\n\t\t%v\n\t\t%v", err.Message, err.Id, err.DetailedError)
 }
